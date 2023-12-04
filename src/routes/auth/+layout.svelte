@@ -1,9 +1,9 @@
 <script lang="ts">
   import {
-    AppBar,
-    AppShell,
-    LightSwitch,
-    initializeStores,
+      AppBar,
+      AppShell,
+      LightSwitch,
+      initializeStores,
   } from "@skeletonlabs/skeleton";
   import "../../app.postcss";
 
@@ -27,7 +27,7 @@
           class="btn btn-sm variant-ghost-surface"
           on:click={() => (window.location.href = "/auth")}
         >
-          <a href="https://blazedcloud.com">GitHub</a>
+          <a href="https://github.com/TheRedSpy15/blazedcloud-web">GitHub</a>
         </button>
         <LightSwitch />
       </svelte:fragment>
