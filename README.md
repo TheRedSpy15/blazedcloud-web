@@ -1,4 +1,4 @@
-# Web interface for Blazed Cloud built
+# Web interface for Blazed Cloud
 
 **Built using Sveltekit and Skeleton UI with Typescript, while being hosted with Cloudflare**
 
