@@ -6,40 +6,33 @@
     getToastStore,
     type ToastSettings,
   } from "@skeletonlabs/skeleton";
-  import PocketBase from "pocketbase";
 
   export let path = "";
-  export let cookie: string;
+  export let token: string;
+  export let uid: string;
 
-  const pb = new PocketBase("https://pb.blazedcloud.com");
   const toastStore = getToastStore();
   const drawerStore = getDrawerStore();
 
   async function optionDelete() {
     try {
-      pb.authStore.loadFromCookie(cookie);
-
       var parentFolder = path.substring(
         0,
         path.lastIndexOf("/", path.length - 2),
       );
       if (parentFolder === "") parentFolder = "root";
-      deleteFolder(pb.authStore.model?.id, path, pb.authStore.token).then(
-        async (result) => {
-          if (result === false) throw new Error("Failed to delete file");
-          console.log(result);
+      deleteFolder(uid, path, token).then(async (result) => {
+        if (result === false) throw new Error("Failed to delete file");
+        console.log(result);
 
-          const t: ToastSettings = {
-            message: "Folder deleted successfully",
-            background: "variant-filled-success",
-          };
-          toastStore.trigger(t);
-          console.log(
-            "Folder deleted successfully - going to: " + parentFolder,
-          );
-          await goto("/dashboard/files/" + encodeURIComponent(parentFolder));
-        },
-      );
+        const t: ToastSettings = {
+          message: "Folder deleted successfully",
+          background: "variant-filled-success",
+        };
+        toastStore.trigger(t);
+        console.log("Folder deleted successfully - going to: " + parentFolder);
+        await goto("/dashboard/files/" + encodeURIComponent(parentFolder));
+      });
     } catch (err) {
       console.error(err);
       const t: ToastSettings = {

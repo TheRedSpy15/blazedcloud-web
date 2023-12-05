@@ -8,33 +8,28 @@
     getToastStore,
     type ToastSettings,
   } from "@skeletonlabs/skeleton";
-  import PocketBase from "pocketbase";
 
   export let file = { Key: "" };
-  export let cookie: string;
+  export let uid: string;
+  export let token: string;
 
-  const pb = new PocketBase("https://pb.blazedcloud.com");
   const toastStore = getToastStore();
   const drawerStore = getDrawerStore();
 
   async function optionDelete() {
     try {
-      pb.authStore.loadFromCookie(cookie);
-
       const fileFolder = file.Key.substring(0, file.Key.lastIndexOf("/"));
-      deleteFile(pb.authStore.model?.id, file.Key, pb.authStore.token).then(
-        async (result) => {
-          if (result === false) throw new Error("Failed to delete file");
-          console.log(result);
+      deleteFile(uid, file.Key, token).then(async (result) => {
+        if (result === false) throw new Error("Failed to delete file");
+        console.log(result);
 
-          const t: ToastSettings = {
-            message: "File deleted successfully",
-            background: "variant-filled-success",
-          };
-          toastStore.trigger(t);
-          await goto("/dashboard/files/" + encodeURIComponent(fileFolder));
-        },
-      );
+        const t: ToastSettings = {
+          message: "File deleted successfully",
+          background: "variant-filled-success",
+        };
+        toastStore.trigger(t);
+        await goto("/dashboard/files/" + encodeURIComponent(fileFolder));
+      });
     } catch (err) {
       console.error(err);
       const t: ToastSettings = {
@@ -48,14 +43,7 @@
 
   async function optionDownload() {
     try {
-      pb.authStore.loadFromCookie(cookie);
-
-      getDownloadUrl(
-        pb.authStore.model?.id,
-        file.Key,
-        false,
-        pb.authStore.token,
-      ).then((result) => {
+      getDownloadUrl(uid, file.Key, false, token).then((result) => {
         if (result === "") throw new Error("Failed to get download URL");
 
         console.log(result);
@@ -75,12 +63,7 @@
   let copied = false;
 
   function onCopyClicked() {
-    getDownloadUrl(
-      pb.authStore.model?.id,
-      file.Key,
-      true,
-      pb.authStore.token,
-    ).then((shlinkUrl) => {
+    getDownloadUrl(uid, file.Key, true, token).then((shlinkUrl) => {
       navigator.clipboard.writeText(shlinkUrl);
       copied = true;
       setTimeout(() => {

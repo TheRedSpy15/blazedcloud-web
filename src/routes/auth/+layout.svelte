@@ -1,15 +1,17 @@
 <script lang="ts">
   import {
-      AppBar,
-      AppShell,
-      LightSwitch,
-      initializeStores,
+    AppBar,
+    AppShell,
+    LightSwitch,
+    Toast,
+    initializeStores,
   } from "@skeletonlabs/skeleton";
   import "../../app.postcss";
 
   initializeStores();
 </script>
 
+<Toast />
 <!-- App Shell -->
 <AppShell>
   <svelte:fragment slot="header">

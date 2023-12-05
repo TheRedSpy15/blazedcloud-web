@@ -13,20 +13,19 @@
     IconFolderPlus,
     IconTrash,
   } from "@tabler/icons-svelte";
-  import PocketBase from "pocketbase";
 
   const drawerStore = getDrawerStore();
-  const pb = new PocketBase("https://pb.blazedcloud.com");
 
   export let data;
-  $: ({ fileList, cookie, usage, capacity, path } = data);
+  $: ({ fileList, usage, capacity, path, uid, token } = data);
 
   function gotoFolder(folderName: string = "") {
-    pb.authStore.loadFromCookie(cookie ?? "");
+    console.log("Token:", token);
+    console.log("Model:", uid);
 
     path += folderName;
     if (!path.endsWith("/")) path += "/";
-    fetchFileList(pb.authStore.token, pb.authStore.model?.id, path)
+    fetchFileList(token, uid, path)
       .then((data) => {
         console.log("Fetched data:", data);
         fileList = data;
@@ -35,12 +34,10 @@
   }
 
   function gotoParentFolder() {
-    pb.authStore.loadFromCookie(cookie ?? "");
-
     path = path.substring(0, path.lastIndexOf("/", path.length - 2));
     if (!path.endsWith("/")) path += "/";
     if (path === "/") path = "";
-    fetchFileList(pb.authStore.token, pb.authStore.model?.id, path)
+    fetchFileList(token, uid, path)
       .then((data) => {
         console.log("Fetched data:", data);
         fileList = data;
@@ -59,7 +56,8 @@
       height: "h-auto",
       meta: {
         path: path,
-        cookie: cookie,
+        token: token,
+        uid: uid,
       },
     });
   }
@@ -75,7 +73,8 @@
       height: "h-auto",
       meta: {
         file: file,
-        cookie: cookie,
+        token: token,
+        uid: uid,
       },
     });
   }
@@ -91,7 +90,8 @@
       height: "h-auto",
       meta: {
         path: path,
-        cookie: cookie,
+        token: token,
+        uid: uid,
       },
     });
   }
@@ -108,11 +108,7 @@
 </p>
 <progress value={(Number(usage) / 1000000000).toFixed(2)} max={capacity} />
 
-<FileDropzone name="files">
-  <svelte:fragment slot="lead"
-    ><i class="fa-solid fa-file-arrow-up text-4xl" /></svelte:fragment
-  >
-</FileDropzone>
+<FileDropzone name="files" />
 
 <div class="table-container">
   <table class="table table-interactive">

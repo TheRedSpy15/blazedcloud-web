@@ -18,17 +18,20 @@
   >{#if $drawerStore.id === "file-details"}
     <FileOptions
       file={$drawerStore.meta.file}
-      cookie={$drawerStore.meta.cookie}
+      token={$drawerStore.meta.token}
+      uid={$drawerStore.meta.uid}
     />
   {:else if $drawerStore.id === "create-folder"}
     <FolderCreator
       path={$drawerStore.meta.path}
-      cookie={$drawerStore.meta.cookie}
+      token={$drawerStore.meta.token}
+      uid={$drawerStore.meta.uid}
     />
   {:else if $drawerStore.id === "delete-folder"}
     <FolderDeleter
       path={$drawerStore.meta.path}
-      cookie={$drawerStore.meta.cookie}
+      token={$drawerStore.meta.token}
+      uid={$drawerStore.meta.uid}
     />
   {/if}</Drawer
 >

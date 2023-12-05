@@ -6,20 +6,16 @@
     getToastStore,
     type ToastSettings,
   } from "@skeletonlabs/skeleton";
-  import PocketBase from "pocketbase";
 
   export let path = "";
-  export let cookie: string;
+  export let token: string;
+  export let uid: string;
   let folderName: string;
 
-  const pb = new PocketBase("https://pb.blazedcloud.com");
   const toastStore = getToastStore();
 
   async function optionCreate() {
     try {
-      pb.authStore.loadFromCookie(cookie);
-      const uid = pb.authStore.model?.id;
-      const token = pb.authStore.token;
       const folderKey = path === "" ? folderName : `${path}${folderName}`;
 
       await createFolder(folderKey, uid, token);
