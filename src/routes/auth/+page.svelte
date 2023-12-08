@@ -1,7 +1,6 @@
 <script lang="ts">
   import Join from "./join.svelte";
   import Login from "./login.svelte";
-  import Oauth from "./oauth.svelte";
 
   import { Tab, TabGroup } from "@skeletonlabs/skeleton";
 
@@ -16,15 +15,15 @@
         <span>Login</span>
       </Tab>
       <Tab bind:group={tabSet} name="join" value={1}>Join</Tab>
-      <Tab bind:group={tabSet} name="oauth" value={2}>Oauth</Tab>
+      <!-- <Tab bind:group={tabSet} name="oauth" value={2}>Oauth</Tab> -->
       <!-- Tab Panels --->
       <svelte:fragment slot="panel">
         {#if tabSet === 0}
           <Login />
         {:else if tabSet === 1}
           <Join />
-        {:else if tabSet === 2}
-          <Oauth />
+          <!-- {:else if tabSet === 2}
+          <Oauth /> -->
         {/if}
       </svelte:fragment>
     </TabGroup>
