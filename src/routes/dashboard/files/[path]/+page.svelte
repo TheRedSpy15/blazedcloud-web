@@ -1,11 +1,20 @@
 <script lang="ts">
+  import { beforeNavigate } from "$app/navigation";
   import {
     convertSize,
     getFileName,
     getFolderName,
   } from "$lib/pocketbase/file_operations.js";
-  import { fetchFileList } from "$lib/pocketbase/files_api.js";
-  import { FileDropzone, getDrawerStore } from "@skeletonlabs/skeleton";
+  import {
+    fetchFileList,
+    getUploadUrl,
+    getUsage,
+  } from "$lib/pocketbase/files_api.js";
+  import {
+    FileDropzone,
+    ProgressBar,
+    getDrawerStore,
+  } from "@skeletonlabs/skeleton";
   import {
     IconCornerLeftUp,
     IconFile,
@@ -13,6 +22,33 @@
     IconFolderPlus,
     IconTrash,
   } from "@tabler/icons-svelte";
+  import axios from "axios";
+
+  class Upload {
+    fileKey: string;
+    progress: number;
+    isUploading: Boolean = true;
+    constructor(fileKey: string) {
+      this.fileKey = fileKey;
+      this.progress = 0;
+      this.isUploading = true;
+    }
+  }
+
+  let tmpUpload: FileList; // used only for the Dropzone on:change event
+  let uploads: Upload[] = []; // used to store state of uploads, format { "fileKey": key, "progress": 0, "state": "uploading" }
+  $: activeUploads = uploads.filter((upload) => upload.isUploading === true);
+  beforeNavigate(({ cancel }) => {
+    if (activeUploads.length > 0) {
+      if (
+        !confirm(
+          "You have active uploads. Are you sure you want to leave this page?\n\nPartially uploaded files will be corrupted, and will need to be reuploaded.",
+        )
+      ) {
+        cancel();
+      }
+    }
+  });
 
   const drawerStore = getDrawerStore();
 
@@ -31,6 +67,10 @@
         fileList = data;
       })
       .catch((err) => console.log(err));
+
+    getUsage(uid, token).then((data) => {
+      usage = data;
+    });
   }
 
   function gotoParentFolder() {
@@ -43,6 +83,22 @@
         fileList = data;
       })
       .catch((err) => console.log(err));
+
+    getUsage(uid, token).then((data) => {
+      usage = data;
+    });
+  }
+
+  function reloadList() {
+    fetchFileList(token, uid, path)
+      .then((data) => {
+        fileList = data;
+      })
+      .catch((err) => console.log(err));
+
+    getUsage(uid, token).then((data) => {
+      usage = data;
+    });
   }
 
   function deleteFolder() {
@@ -106,9 +162,71 @@
 <p>
   Storage usage: {(Number(usage) / 1000000000).toFixed(2)}/{capacity} GB
 </p>
-<progress value={(Number(usage) / 1000000000).toFixed(2)} max={capacity} />
+<ProgressBar
+  value={Number((Number(usage) / 1000000000).toFixed(2))}
+  max={capacity}
+  meter="bg-primary-500"
+/>
 
-<FileDropzone name="files" />
+{#if activeUploads.length > 0}
+  <aside class="alert variant-filled-surface mt-4">
+    <div class="alert-message">
+      <h3 class="h3">Uploading {activeUploads.length} Files</h3>
+      <div>
+        {#each activeUploads as upload}
+          <p>{upload.progress}% {getFileName(upload.fileKey)}</p>
+        {/each}
+      </div>
+    </div>
+  </aside>
+{/if}
+
+<FileDropzone
+  class="mt-4"
+  name="files"
+  bind:files={tmpUpload}
+  on:change={(_) => {
+    uploads = [...uploads, new Upload(path + tmpUpload[0].name)];
+
+    const key = path + tmpUpload[0].name;
+    getUploadUrl(key, token, uid, tmpUpload[0].type).then((url) => {
+      axios
+        .put(url, tmpUpload[0], {
+          headers: {
+            "Content-Type": tmpUpload[0].type,
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total ?? 0),
+            );
+            const upload = uploads.find((upload) => upload.fileKey === key);
+            if (upload) {
+              upload.progress = percentCompleted;
+            }
+            uploads = [...uploads];
+          },
+        })
+        .then((res) => {
+          console.log("Upload response:", res);
+          const upload = uploads.find((upload) => upload.fileKey === key);
+          if (upload) {
+            upload.isUploading = false;
+            reloadList();
+          }
+          reloadList();
+          uploads = [...uploads];
+        })
+        .catch((err) => {
+          const upload = uploads.find((upload) => upload.fileKey === key);
+          if (upload) {
+            upload.isUploading = false;
+          }
+          console.log("Upload error:", err);
+          uploads = [...uploads];
+        });
+    });
+  }}
+/>
 
 <div class="table-container">
   <table class="table table-interactive">

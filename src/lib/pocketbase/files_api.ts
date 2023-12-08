@@ -63,7 +63,7 @@ export async function createFolder(folderKey: string, uid: string, token: string
     getUploadUrl(folderKey + "/.blazed-placeholder", token, uid, "text/plain").then((url) => {
         console.log("Uploading to: " + url);
         var raw = "placeholder";
-        fetch("/api/files/create-folder", {
+        fetch("/api/files/create-folder", { // use backend to proxy cors
             method: 'PUT',
             headers: {
                 'content-type': 'application/json',
