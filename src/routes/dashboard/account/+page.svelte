@@ -1,9 +1,29 @@
 <script lang="ts">
   import { Avatar } from "@skeletonlabs/skeleton";
-  import { IconReportMoney } from "@tabler/icons-svelte";
 
   export let data;
-  $: ({ userRecord } = data);
+  $: ({ userRecord, token } = data);
+
+  $: isUsingMobileStore =
+    userRecord?.terabyte_active && !userRecord?.stripe_active;
+
+  function checkout() {
+    var formData = new FormData();
+    formData.append("priceId", "price_1OVjb8EnqBPpR1rOYF2TdM3f");
+
+    fetch("https://pb.blazedcloud.com/stripe/checkout/" + userRecord?.id, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        window.location.href = data.url;
+      });
+  }
 </script>
 
 <div class="flex flex-col content-between space-y-6">
@@ -14,37 +34,40 @@
     rounded="rounded-full"
     class="mx-auto"
   />
-  <h1 class="h1">Account Management</h1>
+
   <aside class="alert variant-filled-surface">
-    <!-- Icon -->
-    <div><IconReportMoney /></div>
-    <!-- Message -->
-    <div class="alert-message">
-      <h3 class="h3">Billing Notice</h3>
-      <p class="max-w-s">
-        Please note that your subscription must be managed through the app store
-        that you purchased it from. If you are unable to manage your
-        subscription, please contact us at <a
-          href="mailto:billing@blazedcloud.com">billing@blazedcloud.com</a
-        >
-      </p>
+    <div class="alert-message flex flex-col content-between space-y-6">
+      <h3 class="h3">Subscription</h3>
+      {#if !isUsingMobileStore}
+        {#if userRecord?.terabyte_active}
+          You have an active subscription through Stripe. You can manage your
+          subscription there.
+          <button
+            class="btn btn-primary bg-primary-700"
+            on:click={() =>
+              (window.location.href =
+                "https://billing.stripe.com/p/login/fZeaI4a7Teoycuc5kk")}
+          >
+            <a href="https://billing.stripe.com/p/login/fZeaI4a7Teoycuc5kk"
+              >Manage On Stripe</a
+            >
+          </button>
+        {:else if userRecord}
+          You don't have an active subscription currently. You can subscribe
+          using your prefered app store, or using Stripe.
+          <button
+            class="btn btn-primary bg-primary-700"
+            on:click={() => checkout()}
+          >
+            Subscribe with Stripe
+          </button>
+        {/if}
+      {:else}
+        You have an active subscription using either the Apple App Store or
+        Google Play Store. You can manage your subscription there.
+      {/if}
     </div>
   </aside>
-  <p>Email: {userRecord?.email}</p>
-
-  <h2 class="h2">Don't have the app?</h2>
-
-  <p>
-    <a
-      class="max-w-s"
-      href="https://play.google.com/store/apps/details?id=com.chancesoftwarellc.blazedcloud"
-      ><enhanced:img
-        src="$lib/assets/qrcode.webp"
-        alt="QR code to download app for android"
-        class="w-48"
-      /></a
-    >Scan or click QR to download for Android
-  </p>
 </div>
 
 <style>
