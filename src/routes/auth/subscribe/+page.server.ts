@@ -9,6 +9,6 @@ export const actions = {
             throw redirect(303, '/auth');
         }
         cookies.set('pb_auth', JSON.stringify({ token: token }), { path: '/' });
-        throw redirect(303, '/dashboard/files/root');
+        throw redirect(303, '/dashboard/account'); // take user to account page after login instead of files
     }
 } satisfies Actions;

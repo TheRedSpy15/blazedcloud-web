@@ -27,7 +27,9 @@
       <svelte:fragment slot="trail">
         <button
           class="btn btn-sm variant-ghost-surface"
-          on:click={() => (window.location.href = "/auth")}
+          on:click={() =>
+            (window.location.href =
+              "https://github.com/TheRedSpy15/blazedcloud-web")}
         >
           <a href="https://github.com/TheRedSpy15/blazedcloud-web">GitHub</a>
         </button>

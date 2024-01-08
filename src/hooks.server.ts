@@ -13,7 +13,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     const isAuth: boolean = event.url.pathname === '/auth';
     if (isAuth || building) {
-        event.cookies.set('pb_auth', '');
+        event.cookies.set('pb_auth', '', { path: '/' });
         return await resolve(event);
     }
 
@@ -22,6 +22,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     if (!event.locals.pb.authStore.isValid) {
         if (event.url.pathname === '/auth/forgot') {
+            return await resolve(event);
+        } else if (event.url.pathname === '/auth/subscribe') {
             return await resolve(event);
         }
         console.log('Session expired');

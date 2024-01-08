@@ -26,8 +26,8 @@ export const load = async ({ params, locals }) => {
     }
 
     return {
-        fileList: fetchFileList(locals.pb.authStore.token, locals.pb.authStore.model?.id, getPathFromParams()),
-        usage: getUsage(locals.pb.authStore.model?.id, locals.pb.authStore.token),
+        fileList: await fetchFileList(locals.pb.authStore.token, locals.pb.authStore.model?.id, getPathFromParams()),
+        usage: await getUsage(locals.pb.authStore.model?.id, locals.pb.authStore.token),
         capacity: getCapacity(),
         path: getPathFromParams(),
         token: locals.pb.authStore.token,
