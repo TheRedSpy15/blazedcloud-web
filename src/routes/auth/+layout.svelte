@@ -40,9 +40,27 @@
 
   <svelte:fragment slot="footer">
     <!-- App Bar -->
-    <AppBar>
+    <AppBar class="p-1" regionRowMain="w-0 h-0 lg:w-auto lg:h-auto">
       <svelte:fragment slot="lead">
-        <a href="https://blazedcloud.com">What is Blazed Cloud?</a>
+        <a
+          href="https://blazedcloud.com"
+          class="invisible lg:visible w-0 lg:w-auto">What is Blazed Cloud?</a
+        >
+      </svelte:fragment>
+      <svelte:fragment slot="headline">
+        <a
+          href="https://blazedcloud.com/privacy-policy/"
+          class="lg:hidden text-sm h-4"
+        >
+          By logging you are agree to the use of cookies for authentication
+        </a>
+      </svelte:fragment>
+      <svelte:fragment slot="trail">
+        <a
+          href="https://blazedcloud.com/privacy-policy/"
+          class="invisible lg:visible w-0 lg:w-auto"
+          >By logging you are agree to the use of cookies for authentication</a
+        >
       </svelte:fragment>
     </AppBar>
   </svelte:fragment>
