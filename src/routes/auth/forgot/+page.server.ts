@@ -11,6 +11,6 @@ export const actions = {
         if (email || typeof email === 'string') {
             await pb.collection("users").requestPasswordReset(email.toString());
         }
-        throw redirect(303, '/auth');
+        redirect(303, '/auth');
     }
 } satisfies Actions;

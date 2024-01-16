@@ -27,7 +27,7 @@ export const handle: Handle = async ({ event, resolve }) => {
             return await resolve(event);
         }
         console.log('Session expired');
-        throw redirect(303, '/auth');
+        redirect(303, '/auth');
     }
     try {
         const auth = await event.locals.pb
@@ -36,11 +36,11 @@ export const handle: Handle = async ({ event, resolve }) => {
         event.locals.id = auth.record.id;
         event.locals.email = auth.record.email;
     } catch (_) {
-        throw redirect(303, '/auth');
+        redirect(303, '/auth');
     }
 
     if (!event.locals.id) {
-        throw redirect(303, '/auth');
+        redirect(303, '/auth');
     }
 
     const response = await resolve(event);
