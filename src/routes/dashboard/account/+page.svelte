@@ -8,14 +8,16 @@
     userRecord?.terabyte_active && !userRecord?.stripe_active;
 
   function checkout() {
+    var headers = new Headers();
+    headers.append("Authorization", "Bearer " + token);
+    headers.append("User-Agent", "blazed-portal");
+
     var formData = new FormData();
     formData.append("priceId", "price_1OVjb8EnqBPpR1rOYF2TdM3f");
 
     fetch("https://pb.blazedcloud.com/stripe/checkout/" + userRecord?.id, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: headers,
       body: formData,
     })
       .then((res) => res.json())

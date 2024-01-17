@@ -5,6 +5,7 @@ export async function PUT({ request, fetch }) {
     const headers = new Headers();
     headers.append("Content-Type", type);
     headers.append("Content-Length", length.toString());
+    headers.append("User-Agent", "blazed-portal");
 
     const reponse = await fetch(uploadUrl, {
         method: 'PUT',

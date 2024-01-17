@@ -194,6 +194,7 @@
         .put(url, tmpUpload[0], {
           headers: {
             "Content-Type": tmpUpload[0].type,
+            "User-Agent": "blazed-portal",
           },
           onUploadProgress: (progressEvent) => {
             const percentCompleted = Math.round(

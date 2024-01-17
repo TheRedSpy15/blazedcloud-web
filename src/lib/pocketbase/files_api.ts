@@ -2,6 +2,7 @@
 export async function fetchFileList(token: string, uid: string, prefix: string): Promise<any> {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${token}`);
+    myHeaders.append("User-Agent", "blazed-portal");
 
     var formdata = new FormData();
     formdata.append("prefix", prefix);
@@ -26,6 +27,7 @@ export async function getDownloadUrl(uid: string, key: string, shlink: Boolean, 
         "Authorization",
         `Bearer ${token}`,
     );
+    myHeaders.append("User-Agent", "blazed-portal");
 
     var formdata = new FormData();
     formdata.append("filename", key);
@@ -47,6 +49,7 @@ export async function getUsage(uid: string, token: string): Promise<string> {
         "Authorization",
         `Bearer ${token}`,
     );
+    myHeaders.append("User-Agent", "blazed-portal");
 
     const response = await fetch(`https://pb.blazedcloud.com/data/usage/${uid}`, {
         method: "GET",
@@ -67,6 +70,7 @@ export async function createFolder(folderKey: string, uid: string, token: string
             method: 'PUT',
             headers: {
                 'content-type': 'application/json',
+                'User-Agent': 'blazed-portal'
             },
             body: JSON.stringify({
                 type: "text/plain",
@@ -93,6 +97,7 @@ export async function deleteFile(uid: string, key: any, token: string): Promise<
             "Authorization",
             `Bearer ${token}`
         );
+        myHeaders.append("User-Agent", "blazed-portal");
 
         var formdata = new FormData();
         formdata.append("fileKey", key);
@@ -122,6 +127,7 @@ export async function deleteFolder(uid: string, key: any, token: string): Promis
             "Authorization",
             `Bearer ${token}`
         );
+        myHeaders.append("User-Agent", "blazed-portal");
 
         var formdata = new FormData();
         formdata.append("folderKey", key);
@@ -152,6 +158,7 @@ export async function getUploadUrl(filename: string, token: string, uid: string,
         "Authorization",
         `Bearer ${token}`,
     );
+    myHeaders.append("User-Agent", "blazed-portal");
 
     var formdata = new FormData();
     formdata.append("filename", filename);
@@ -176,6 +183,7 @@ export async function uploadToUrl(url: string, file: File, type: string): Promis
     var myHeaders = new Headers();
     if (type !== "") myHeaders.append("Content-Type", type);
     myHeaders.append("Content-Length", bodySize.toString());
+    myHeaders.append("User-Agent", "blazed-portal");
 
     const response = await fetch(url, {
         method: 'PUT',
