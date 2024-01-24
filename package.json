@@ -43,6 +43,7 @@
   "type": "module",
   "dependencies": {
     "@sentry/sveltekit": "^7.95.0",
+    "@sveltejs/adapter-cloudflare": "^4.1.0",
     "@tabler/icons-svelte": "^2.46.0",
     "axios": "^1.6.5",
     "pocketbase": "^0.20.3"
