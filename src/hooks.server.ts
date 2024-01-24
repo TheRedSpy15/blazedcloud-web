@@ -1,8 +1,15 @@
+import {sequence} from '@sveltejs/kit/hooks';
+import * as Sentry from '@sentry/sveltekit';
 import { building } from '$app/environment';
 import { redirect, type Handle } from '@sveltejs/kit';
 import PocketBase from 'pocketbase';
 
-export const handle: Handle = async ({ event, resolve }) => {
+Sentry.init({
+    dsn: "https://ce673dccb69c3ddb19dba10e1f511232@o4504715701518336.ingest.sentry.io/4506624535494656",
+    tracesSampleRate: 1
+})
+
+export const handle: Handle = sequence(Sentry.sentryHandle(), async ({ event, resolve }) => {
     if (event.url.pathname.startsWith('/api/')) {
         return await resolve(event);
     }
@@ -47,4 +54,5 @@ export const handle: Handle = async ({ event, resolve }) => {
     const cookie = event.locals.pb.authStore.exportToCookie({ sameSite: 'lax' });
     response.headers.append('set-cookie', cookie);
     return response;
-};
+});
+export const handleError = Sentry.handleErrorWithSentry();
