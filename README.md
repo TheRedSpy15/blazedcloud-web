@@ -11,3 +11,4 @@
 ### Other Blazed Cloud Repos:
 - [Mobile](https://github.com/TheRedSpy15/blazedcloud)
 - [Landing](https://github.com/TheRedSpy15/blazedcloud-landing)
+- [Desktop tool](https://github.com/TheRedSpy15/blazedcloud-sync)
