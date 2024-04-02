@@ -1,11 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { createFolder } from "$lib/pocketbase/files_api";
-  import {
-    getDrawerStore,
-    getToastStore,
-    type ToastSettings,
-  } from "@skeletonlabs/skeleton";
+  import { getToastStore, type ToastSettings } from "@skeletonlabs/skeleton";
 
   export let path = "";
   export let token: string;
@@ -19,8 +15,6 @@
       const folderKey = path === "" ? folderName : `${path}${folderName}`;
 
       await createFolder(folderKey, uid, token);
-      const drawerStore = getDrawerStore();
-      drawerStore.close();
       const t: ToastSettings = {
         message: "Folder created successfully",
         background: "variant-filled-success",
