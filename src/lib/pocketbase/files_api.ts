@@ -12,7 +12,7 @@ export async function fetchFileList(token: string, uid: string, prefix: string):
         headers: myHeaders,
         redirect: 'follow',
         body: formdata
-    }).catch(error => console.log('error', error));
+    }).catch(error => console.error('error', error));
 
     if (reponse) {
         return reponse.json();
@@ -110,7 +110,7 @@ export async function deleteFile(uid: string, key: any, token: string): Promise<
         })
             .then((response) => response.text())
             .then((result) => console.log(result))
-            .catch((error) => console.log("error", error));
+            .catch((error) => console.error("error", error));
     } catch (err) {
         console.error(err);
         return false;
@@ -140,7 +140,7 @@ export async function deleteFolder(uid: string, key: any, token: string): Promis
         })
             .then((response) => response.text())
             .then((result) => console.log(result))
-            .catch((error) => console.log("error", error));
+            .catch((error) => console.error("error", error));
     } catch (err) {
         console.error(err);
         return false;

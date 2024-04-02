@@ -13,14 +13,14 @@
   let folderName: string;
 
   const toastStore = getToastStore();
+  const drawerStore = getDrawerStore();
 
   async function optionCreate() {
     try {
       const folderKey = path === "" ? folderName : `${path}${folderName}`;
 
       await createFolder(folderKey, uid, token);
-      const drawerStore = getDrawerStore();
-      drawerStore.close();
+
       const t: ToastSettings = {
         message: "Folder created successfully",
         background: "variant-filled-success",
@@ -35,6 +35,7 @@
       };
       toastStore.trigger(t);
     }
+    drawerStore.close();
   }
 </script>
 

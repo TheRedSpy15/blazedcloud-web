@@ -66,7 +66,7 @@
         console.log("Fetched data:", data);
         fileList = data;
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
 
     getUsage(uid, token).then((data) => {
       usage = data;
@@ -82,7 +82,7 @@
         console.log("Fetched data:", data);
         fileList = data;
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
 
     getUsage(uid, token).then((data) => {
       usage = data;
@@ -94,7 +94,7 @@
       .then((data) => {
         fileList = data;
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
 
     getUsage(uid, token).then((data) => {
       usage = data;
@@ -184,47 +184,50 @@
 <FileDropzone
   class="mt-4"
   name="files"
+  multiple
   bind:files={tmpUpload}
   on:change={(_) => {
-    uploads = [...uploads, new Upload(path + tmpUpload[0].name)];
+    Array.from(tmpUpload).forEach((file) => {
+      uploads = [...uploads, new Upload(path + file.name)];
 
-    const key = path + tmpUpload[0].name;
-    getUploadUrl(key, token, uid, tmpUpload[0].type).then((url) => {
-      axios
-        .put(url, tmpUpload[0], {
-          headers: {
-            "Content-Type": tmpUpload[0].type,
-            "User-Agent": "blazed-portal",
-          },
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / (progressEvent.total ?? 0),
-            );
+      const key = path + file.name;
+      getUploadUrl(key, token, uid, file.type).then((url) => {
+        axios
+          .put(url, file, {
+            headers: {
+              "Content-Type": file.type,
+              "User-Agent": "blazed-portal",
+            },
+            onUploadProgress: (progressEvent) => {
+              const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / (progressEvent.total ?? 0),
+              );
+              const upload = uploads.find((upload) => upload.fileKey === key);
+              if (upload) {
+                upload.progress = percentCompleted;
+              }
+              uploads = [...uploads];
+            },
+          })
+          .then((res) => {
+            console.log("Upload response:", res);
             const upload = uploads.find((upload) => upload.fileKey === key);
             if (upload) {
-              upload.progress = percentCompleted;
+              upload.isUploading = false;
+              reloadList();
             }
-            uploads = [...uploads];
-          },
-        })
-        .then((res) => {
-          console.log("Upload response:", res);
-          const upload = uploads.find((upload) => upload.fileKey === key);
-          if (upload) {
-            upload.isUploading = false;
             reloadList();
-          }
-          reloadList();
-          uploads = [...uploads];
-        })
-        .catch((err) => {
-          const upload = uploads.find((upload) => upload.fileKey === key);
-          if (upload) {
-            upload.isUploading = false;
-          }
-          console.log("Upload error:", err);
-          uploads = [...uploads];
-        });
+            uploads = [...uploads];
+          })
+          .catch((err) => {
+            const upload = uploads.find((upload) => upload.fileKey === key);
+            if (upload) {
+              upload.isUploading = false;
+            }
+            console.error("Upload error:", err);
+            uploads = [...uploads];
+          });
+      });
     });
   }}
 />
