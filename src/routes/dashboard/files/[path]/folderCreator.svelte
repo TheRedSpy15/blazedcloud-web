@@ -1,7 +1,11 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { createFolder } from "$lib/pocketbase/files_api";
-  import { getToastStore, type ToastSettings } from "@skeletonlabs/skeleton";
+  import {
+    getDrawerStore,
+    getToastStore,
+    type ToastSettings,
+  } from "@skeletonlabs/skeleton";
 
   export let path = "";
   export let token: string;
@@ -9,12 +13,14 @@
   let folderName: string;
 
   const toastStore = getToastStore();
+  const drawerStore = getDrawerStore();
 
   async function optionCreate() {
     try {
       const folderKey = path === "" ? folderName : `${path}${folderName}`;
 
       await createFolder(folderKey, uid, token);
+
       const t: ToastSettings = {
         message: "Folder created successfully",
         background: "variant-filled-success",
@@ -29,6 +35,7 @@
       };
       toastStore.trigger(t);
     }
+    drawerStore.close();
   }
 </script>
 
