@@ -5,7 +5,7 @@
   $: ({ userRecord, token } = data);
 
   $: isUsingMobileStore =
-    userRecord?.terabyte_active && !userRecord?.stripe_active;
+    userRecord?.active_tier.length > 0 && !userRecord?.stripe_active;
 
   function checkout() {
     var headers = new Headers();
