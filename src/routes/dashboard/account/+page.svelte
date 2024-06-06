@@ -5,7 +5,7 @@
   $: ({ userRecord, token } = data);
 
   $: isUsingMobileStore =
-    userRecord?.terabyte_active && !userRecord?.stripe_active;
+    userRecord?.active_tier.length > 0 && !userRecord?.stripe_active;
 
   function checkout() {
     var headers = new Headers();
@@ -41,7 +41,7 @@
     <div class="alert-message flex flex-col content-between space-y-6">
       <h3 class="h3">Subscription</h3>
       {#if !isUsingMobileStore}
-        {#if userRecord?.terabyte_active}
+        {#if userRecord?.active_tier.length > 0}
           You have an active subscription through Stripe. You can manage your
           subscription there.
           <button

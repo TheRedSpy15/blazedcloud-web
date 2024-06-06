@@ -5,7 +5,7 @@ export const load = async ({ params, locals }) => {
         var capacity = 5;
 
         if (locals.pb.authStore.model) {
-            if (locals.pb.authStore.model.terabyte_active === true) {
+            if (locals.pb.authStore.model.active_tier.length > 0) {
                 capacity = 1000;
             }
         }
