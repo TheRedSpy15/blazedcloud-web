@@ -13,7 +13,7 @@
     headers.append("User-Agent", "blazed-portal");
 
     var formData = new FormData();
-    formData.append("priceId", "price_1OVjb8EnqBPpR1rOYF2TdM3f");
+    formData.append("priceId", "price_1PT9opEnqBPpR1rOXXMAc5pY");
 
     fetch("https://pb.blazedcloud.com/stripe/checkout/" + userRecord?.id, {
       method: "POST",
