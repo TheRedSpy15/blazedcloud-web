@@ -27,13 +27,22 @@
         {/if}
       </svelte:fragment>
     </TabGroup>
-    <a
-      href="/auth/forgot"
-      data-sveltekit-prefetch
-      class="text-sm text-gray-500 hover:underline"
-    >
-      Forgot your password?
-    </a>
+    <div class="flex flex-col">
+      <a
+        href="https://blazedcloud.com/start"
+        data-sveltekit-prefetch
+        class="text-sm text-gray-500 hover:underline"
+      >
+        Download App
+      </a>
+      <a
+        href="/auth/forgot"
+        data-sveltekit-prefetch
+        class="text-sm text-gray-500 hover:underline p-2"
+      >
+        Forgot your password?
+      </a>
+    </div>
   </div>
 </div>
 
