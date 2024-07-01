@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { Avatar } from "@skeletonlabs/skeleton";
-
   export let data;
   $: ({ userRecord, token } = data);
 
@@ -29,14 +27,6 @@
 </script>
 
 <div class="flex flex-col content-between space-y-6">
-  <Avatar
-    src="https://api.dicebear.com/7.x/open-peeps/svg?seed={Date.now()}"
-    alt="avatar"
-    width="w-32"
-    rounded="rounded-full"
-    class="mx-auto"
-  />
-
   <aside class="alert variant-filled-surface">
     <div class="alert-message flex flex-col content-between space-y-6">
       <h3 class="h3">Subscription</h3>
