@@ -1,6 +1,9 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { getFileName } from "$lib/pocketbase/file_operations";
+  import {
+    getFileName,
+    getMimeTypeFromExtension,
+  } from "$lib/pocketbase/file_operations";
   import { deleteFile, getDownloadUrl } from "$lib/pocketbase/files_api";
   import { download } from "$lib/utils";
   import {
@@ -71,22 +74,109 @@
       }, 1000);
     });
   }
+
+  function isMediaFile(fileName: string): string | null {
+    const extension = fileName.split(".").pop()?.toLowerCase();
+    if (!extension) return null;
+
+    const mimeType = getMimeTypeFromExtension(extension);
+    if (
+      mimeType.startsWith("image/") ||
+      mimeType.startsWith("video/") ||
+      mimeType.startsWith("audio/")
+    ) {
+      return mimeType;
+    }
+    return null;
+  }
+
+  let mediaUrl: string | null = null;
+  let mediaType: string | null = null;
+
+  $: {
+    mediaType = isMediaFile(file.Key);
+    if (mediaType) {
+      getDownloadUrl(uid, file.Key, false, token).then((url) => {
+        mediaUrl = url;
+      });
+    }
+  }
 </script>
 
-<h6 class="h3 p-4">{getFileName(file.Key)}</h6>
-<div class="flex flex-col space-y-2 p-6">
-  <button
-    on:click={onCopyClicked}
-    type="button"
-    class="btn variant-filled-surface"
-    >{copied ? "Copied 👍" : "📋 Copy Share URL"}</button
-  >
-  <button
-    type="button"
-    class="btn variant-filled-surface"
-    on:click={optionDownload}>💾 Download File</button
-  >
-  <button type="button" class="btn variant-filled-error" on:click={optionDelete}
-    >💣 Delete File</button
-  >
+<div class="file-options-container">
+  <h6 class="h3 p-4">{getFileName(file.Key)}</h6>
+
+  {#if mediaType && mediaUrl}
+    <div class="media-preview">
+      {#if mediaType.startsWith("image/")}
+        <img src={mediaUrl} alt={getFileName(file.Key)} />
+      {:else if mediaType.startsWith("video/")}
+        <div class="video-container">
+          <video src={mediaUrl} controls>
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      {:else if mediaType.startsWith("audio/")}
+        <audio src={mediaUrl} controls>
+          Your browser does not support the audio tag.
+        </audio>
+      {/if}
+    </div>
+  {/if}
+
+  <div class="flex flex-col space-y-2 p-6">
+    <button
+      on:click={onCopyClicked}
+      type="button"
+      class="btn variant-filled-surface"
+      >{copied ? "Copied 👍" : "📋 Copy Share URL"}</button
+    >
+    <button
+      type="button"
+      class="btn variant-filled-surface"
+      on:click={optionDownload}>💾 Download File</button
+    >
+    <button
+      type="button"
+      class="btn variant-filled-error"
+      on:click={optionDelete}>💣 Delete File</button
+    >
+  </div>
 </div>
+
+<style>
+  .file-options-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .media-preview {
+    max-width: 80%;
+    max-height: 60vh;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .media-preview img,
+  .media-preview audio {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .video-container {
+    max-width: 640px;
+    max-height: 360px;
+  }
+
+  .video-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+</style>
