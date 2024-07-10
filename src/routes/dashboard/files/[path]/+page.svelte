@@ -55,6 +55,15 @@
   export let data;
   $: ({ fileList, usage, capacity, path, uid, token } = data);
 
+  let searchTerm = "";
+
+  function filterFiles(files, term) {
+    if (!term.trim()) return files;
+    return files.filter((file) =>
+      getFileName(file.Key).toLowerCase().includes(term.toLowerCase()),
+    );
+  }
+
   function gotoFolder(folderName: string = "") {
     console.log("Token:", token);
     console.log("Model:", uid);
@@ -232,6 +241,15 @@
   }}
 />
 
+<div class="search-container mb-4 mt-4">
+  <input
+    type="text"
+    placeholder="Search files..."
+    bind:value={searchTerm}
+    class="input"
+  />
+</div>
+
 <div class="table-container">
   <table class="table table-interactive">
     <thead>
@@ -271,7 +289,7 @@
       {/if}
 
       {#if fileList && fileList.Contents}
-        {#each fileList.Contents as file}
+        {#each filterFiles(fileList.Contents, searchTerm) as file}
           {#if !file.Key.includes(".blazed-placeholder")}
             <tr on:click={() => inspectFile(file)}>
               <td><IconFile /></td>
