@@ -65,7 +65,7 @@
 
   let searchTerm = "";
 
-  function filterFiles(files, term) {
+  function filterFiles(files: any[], term: string) {
     if (!term.trim()) return files;
     return files.filter((file) =>
       getFileName(file.Key).toLowerCase().includes(term.toLowerCase()),
@@ -75,7 +75,7 @@
   let sortColumn = "Name";
   let sortDirection = "asc";
 
-  function sortFiles(files, column, direction) {
+  function sortFiles(files: any[], column: string, direction: string) {
     return [...files].sort((a, b) => {
       let aValue, bValue;
       if (column === "Name") {
@@ -95,12 +95,12 @@
     });
   }
 
-  function formatDate(dateString) {
+  function formatDate(dateString: string) {
     const date = new Date(dateString);
     return date.toLocaleString(); // You can customize this format as needed
   }
 
-  function toggleSort(column) {
+  function toggleSort(column: string) {
     if (sortColumn === column) {
       sortDirection = sortDirection === "asc" ? "desc" : "asc";
     } else {
