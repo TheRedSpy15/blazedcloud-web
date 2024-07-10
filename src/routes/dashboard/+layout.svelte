@@ -1,25 +1,51 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import {
     AppBar,
     AppRail,
     AppRailAnchor,
     AppShell,
+    getDrawerStore,
     LightSwitch,
   } from "@skeletonlabs/skeleton";
+  import { IconFiles, IconMenu2, IconUser } from "@tabler/icons-svelte";
+  import { onMount } from "svelte";
   import "../../app.postcss";
-  // Floating UI for Popups
-  import { page } from "$app/stores";
-  import { IconFiles, IconUser } from "@tabler/icons-svelte";
 
-  let currentTile: number = 0;
+  const drawerStore = getDrawerStore();
+
+  let isMobile = false;
+
+  function checkMobile() {
+    isMobile = window.innerWidth < 1024;
+  }
+
+  onMount(() => {
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  });
+
+  function openDrawer() {
+    drawerStore.open({
+      id: "mobile-nav",
+    });
+  }
 </script>
 
 <!-- App Shell -->
 <AppShell>
   <svelte:fragment slot="header">
-    <!-- App Bar -->
     <AppBar>
       <svelte:fragment slot="lead">
+        {#if isMobile}
+          <button
+            class="btn btn-sm variant-ghost-surface mr-2"
+            on:click={openDrawer}
+          >
+            <IconMenu2 />
+          </button>
+        {/if}
         <span
           class="bg-gradient-to-br from-red-500 to-yellow-500 bg-clip-text text-transparent box-decoration-clone capitalize"
         >
@@ -27,71 +53,45 @@
         </span>
       </svelte:fragment>
       <svelte:fragment slot="trail">
-        <button
-          class="btn btn-sm variant-ghost-surface"
-          on:click={() => (window.location.href = "/auth")}
-        >
-          Logout
-        </button>
+        {#if !isMobile}
+          <button
+            class="btn btn-sm variant-ghost-surface"
+            on:click={() => (window.location.href = "/auth")}
+          >
+            Logout
+          </button>
+        {/if}
         <LightSwitch />
       </svelte:fragment>
     </AppBar>
   </svelte:fragment>
 
   <svelte:fragment slot="sidebarLeft">
-    <!-- Hidden below Tailwind's large breakpoint -->
-    <AppRail>
-      <AppRailAnchor
-        bind:group={currentTile}
-        name="tile-files"
-        value={0}
-        title="tile-files"
-        href="/dashboard/files/root"
-        data-sveltekit-prefetch
-        selected={$page.url.pathname.startsWith("/dashboard/files")}
-      >
-        <svelte:fragment slot="lead"
-          ><i class="fa-solid fa-image text-2xl"><IconFiles /></i
-          ></svelte:fragment
+    {#if !isMobile}
+      <AppRail>
+        <AppRailAnchor
+          href="/dashboard/files/root"
+          data-sveltekit-prefetch
+          selected={$page.url.pathname.startsWith("/dashboard/files")}
         >
-        <span>Files</span>
-      </AppRailAnchor>
+          <svelte:fragment slot="lead"><IconFiles /></svelte:fragment>
+          <span>Files</span>
+        </AppRailAnchor>
 
-      <!-- <AppRailAnchor
-        bind:group={currentTile}
-        name="tile-editor"
-        value={3}
-        title="tile-editor"
-        href="/dashboard/editor"
-        data-sveltekit-prefetch
-        selected={$page.url.pathname === "/dashboard/editor"}
-      >
-        <svelte:fragment slot="lead">
-          <i class="fa-solid fa-image text-2xl"><IconEdit /></i>
-        </svelte:fragment>
-        <span>Editor</span>
-      </AppRailAnchor> -->
-
-      <AppRailAnchor
-        bind:group={currentTile}
-        name="tile-account"
-        value={1}
-        title="tile-account"
-        href="/dashboard/account"
-        data-sveltekit-prefetch
-        selected={$page.url.pathname === "/dashboard/account"}
-      >
-        <svelte:fragment slot="lead"
-          ><i class="fa-solid fa-image text-2xl"><IconUser /></i
-          ></svelte:fragment
+        <AppRailAnchor
+          href="/dashboard/account"
+          data-sveltekit-prefetch
+          selected={$page.url.pathname === "/dashboard/account"}
         >
-        <span>Account</span>
-      </AppRailAnchor>
-    </AppRail>
+          <svelte:fragment slot="lead"><IconUser /></svelte:fragment>
+          <span>Account</span>
+        </AppRailAnchor>
+      </AppRail>
+    {/if}
   </svelte:fragment>
 
   <!-- Page Route Content -->
-  <div class="container p-10 mx-auto">
+  <div class="container p-4 mx-auto">
     <slot />
   </div>
 </AppShell>

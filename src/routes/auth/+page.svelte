@@ -10,7 +10,7 @@
 <div class="container h-full mx-auto flex justify-center items-center">
   <div class="space-y-10 text-center flex flex-col items-center">
     <h2 class="h2">🔒 Cool kids only.</h2>
-    <TabGroup justify="justify-center">
+    <TabGroup justify="justify-center" class="p-4">
       <Tab bind:group={tabSet} name="login" value={0}>
         <span>Login</span>
       </Tab>
