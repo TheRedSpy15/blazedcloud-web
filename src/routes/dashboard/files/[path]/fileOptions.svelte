@@ -154,8 +154,8 @@
   }
 
   .media-preview {
-    max-width: 80%;
-    max-height: 60vh;
+    max-width: 640px;
+    max-height: 360px;
     margin-bottom: 1rem;
     display: flex;
     justify-content: center;
@@ -164,8 +164,8 @@
 
   .media-preview img,
   .media-preview audio {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 640px;
+    max-height: 360px;
     object-fit: contain;
   }
 

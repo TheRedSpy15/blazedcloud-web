@@ -49,6 +49,8 @@
     "@sveltejs/adapter-cloudflare": "^4.6.1",
     "@tabler/icons-svelte": "^3.9.0",
     "axios": "^1.7.2",
-    "pocketbase": "^0.21.3"
+    "chart.js": "^4.4.3",
+    "pocketbase": "^0.21.3",
+    "svelte-chartjs": "^3.1.5"
   }
 }
