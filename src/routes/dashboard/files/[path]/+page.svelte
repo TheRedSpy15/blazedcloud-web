@@ -64,6 +64,35 @@
     );
   }
 
+  let sortColumn = "Name";
+  let sortDirection = "asc";
+
+  function sortFiles(files, column, direction) {
+    return [...files].sort((a, b) => {
+      let aValue, bValue;
+      if (column === "Name") {
+        aValue = getFileName(a.Key).toLowerCase();
+        bValue = getFileName(b.Key).toLowerCase();
+      } else if (column === "Size") {
+        aValue = a.Size;
+        bValue = b.Size;
+      }
+
+      if (aValue < bValue) return direction === "asc" ? -1 : 1;
+      if (aValue > bValue) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+  }
+
+  function toggleSort(column) {
+    if (sortColumn === column) {
+      sortDirection = sortDirection === "asc" ? "desc" : "asc";
+    } else {
+      sortColumn = column;
+      sortDirection = "asc";
+    }
+  }
+
   function gotoFolder(folderName: string = "") {
     console.log("Token:", token);
     console.log("Model:", uid);
@@ -255,8 +284,20 @@
     <thead>
       <tr>
         <th></th>
-        <th>Name</th>
-        <th>Size</th>
+        <th on:click={() => toggleSort("Name")}>
+          Name {sortColumn === "Name"
+            ? sortDirection === "asc"
+              ? "▲"
+              : "▼"
+            : ""}
+        </th>
+        <th on:click={() => toggleSort("Size")}>
+          Size {sortColumn === "Size"
+            ? sortDirection === "asc"
+              ? "▲"
+              : "▼"
+            : ""}
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -289,7 +330,7 @@
       {/if}
 
       {#if fileList && fileList.Contents}
-        {#each filterFiles(fileList.Contents, searchTerm) as file}
+        {#each sortFiles(filterFiles(fileList.Contents, searchTerm), sortColumn, sortDirection) as file}
           {#if !file.Key.includes(".blazed-placeholder")}
             <tr on:click={() => inspectFile(file)}>
               <td><IconFile /></td>
@@ -322,4 +363,11 @@
 </div>
 
 <style>
+  th {
+    cursor: pointer;
+    user-select: none;
+  }
+  th:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
 </style>
