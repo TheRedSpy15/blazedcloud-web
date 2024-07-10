@@ -8,6 +8,7 @@
   import FileOptions from "./dashboard/files/[path]/fileOptions.svelte";
   import FolderCreator from "./dashboard/files/[path]/folderCreator.svelte";
   import FolderDeleter from "./dashboard/files/[path]/folderDeleter.svelte";
+  import MobileNav from "./dashboard/mobileNav.svelte";
 
   initializeStores();
   const drawerStore = getDrawerStore();
@@ -33,6 +34,8 @@
       token={$drawerStore.meta.token}
       uid={$drawerStore.meta.uid}
     />
-  {/if}</Drawer
->
+  {:else if $drawerStore.id === "mobile-nav"}
+    <MobileNav />
+  {/if}
+</Drawer>
 <slot />

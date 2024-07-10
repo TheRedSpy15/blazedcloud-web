@@ -18,9 +18,17 @@
   import {
     IconCornerLeftUp,
     IconFile,
+    IconFileCode,
+    IconFileDescription,
+    IconFileMusic,
+    IconFileSpreadsheet,
+    IconFileText,
+    IconFileZip,
     IconFolder,
     IconFolderPlus,
+    IconPhoto,
     IconTrash,
+    IconVideo,
   } from "@tabler/icons-svelte";
   import axios from "axios";
 
@@ -54,6 +62,52 @@
 
   export let data;
   $: ({ fileList, usage, capacity, path, uid, token } = data);
+
+  let searchTerm = "";
+
+  function filterFiles(files: any[], term: string) {
+    if (!term.trim()) return files;
+    return files.filter((file) =>
+      getFileName(file.Key).toLowerCase().includes(term.toLowerCase()),
+    );
+  }
+
+  let sortColumn = "Name";
+  let sortDirection = "asc";
+
+  function sortFiles(files: any[], column: string, direction: string) {
+    return [...files].sort((a, b) => {
+      let aValue, bValue;
+      if (column === "Name") {
+        aValue = getFileName(a.Key).toLowerCase();
+        bValue = getFileName(b.Key).toLowerCase();
+      } else if (column === "Size") {
+        aValue = a.Size;
+        bValue = b.Size;
+      } else if (column === "Date") {
+        aValue = new Date(a.LastModified);
+        bValue = new Date(b.LastModified);
+      }
+
+      if (aValue < bValue) return direction === "asc" ? -1 : 1;
+      if (aValue > bValue) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+  }
+
+  function formatDate(dateString: string) {
+    const date = new Date(dateString);
+    return date.toLocaleString(); // You can customize this format as needed
+  }
+
+  function toggleSort(column: string) {
+    if (sortColumn === column) {
+      sortDirection = sortDirection === "asc" ? "desc" : "asc";
+    } else {
+      sortColumn = column;
+      sortDirection = "asc";
+    }
+  }
 
   function gotoFolder(folderName: string = "") {
     console.log("Token:", token);
@@ -151,6 +205,49 @@
       },
     });
   }
+
+  function getFileIcon(fileName: string) {
+    const extension = fileName.split(".").pop()?.toLowerCase();
+    switch (extension) {
+      case "txt":
+      case "md":
+      case "rtf":
+        return IconFileText;
+      case "xls":
+      case "xlsx":
+      case "csv":
+        return IconFileSpreadsheet;
+      case "zip":
+      case "rar":
+      case "7z":
+        return IconFileZip;
+      case "mp3":
+      case "wav":
+      case "ogg":
+        return IconFileMusic;
+      case "mp4":
+      case "avi":
+      case "mov":
+        return IconVideo;
+      case "js":
+      case "py":
+      case "java":
+      case "cpp":
+      case "html":
+      case "css":
+        return IconFileCode;
+      case "pdf":
+        return IconFileDescription;
+      case "jpg":
+      case "jpeg":
+      case "png":
+      case "gif":
+      case "bmp":
+        return IconPhoto;
+      default:
+        return IconFile;
+    }
+  }
 </script>
 
 {#if path === ""}
@@ -232,13 +329,41 @@
   }}
 />
 
+<div class="search-container mb-4 mt-4">
+  <input
+    type="text"
+    placeholder="Search files..."
+    bind:value={searchTerm}
+    class="input"
+  />
+</div>
+
 <div class="table-container">
   <table class="table table-interactive">
     <thead>
       <tr>
         <th></th>
-        <th>Name</th>
-        <th>Size</th>
+        <th on:click={() => toggleSort("Name")}>
+          Name {sortColumn === "Name"
+            ? sortDirection === "asc"
+              ? "▲"
+              : "▼"
+            : ""}
+        </th>
+        <th on:click={() => toggleSort("Size")}>
+          Size {sortColumn === "Size"
+            ? sortDirection === "asc"
+              ? "▲"
+              : "▼"
+            : ""}
+        </th>
+        <th on:click={() => toggleSort("Date")}>
+          Date {sortColumn === "Date"
+            ? sortDirection === "asc"
+              ? "▲"
+              : "▼"
+            : ""}
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -247,17 +372,20 @@
           <td><IconCornerLeftUp /></td>
           <td><b>Previous Folder</b></td>
           <td></td>
+          <td></td>
         </tr>
 
         <tr on:click={() => deleteFolder()}>
           <td><span class="text-red-500"><IconTrash /></span></td>
           <td><span class="text-red-500"><b>Delete Folder</b></span></td>
           <td></td>
+          <td></td>
         </tr>
       {/if}
       <tr on:click={() => folderCreator()}>
-        <td><IconFolderPlus /></td>
-        <td><b>Create Folder</b></td>
+        <td><IconFolderPlus class="text-primary-500" /></td>
+        <td><b class="text-primary-500">Create Folder</b></td>
+        <td></td>
         <td></td>
       </tr>
       {#if fileList && fileList.CommonPrefixes}
@@ -266,17 +394,21 @@
             <td><IconFolder /></td>
             <td><b>{getFolderName(folder.Prefix)}</b></td>
             <td></td>
+            <td></td>
           </tr>
         {/each}
       {/if}
 
       {#if fileList && fileList.Contents}
-        {#each fileList.Contents as file}
+        {#each sortFiles(filterFiles(fileList.Contents, searchTerm), sortColumn, sortDirection) as file}
           {#if !file.Key.includes(".blazed-placeholder")}
             <tr on:click={() => inspectFile(file)}>
-              <td><IconFile /></td>
+              <td>
+                <svelte:component this={getFileIcon(getFileName(file.Key))} />
+              </td>
               <td>{getFileName(file.Key)}</td>
               <td>{convertSize(file.Size)}</td>
+              <td>{formatDate(file.LastModified)}</td>
             </tr>
           {/if}
         {/each}
@@ -284,12 +416,13 @@
     </tbody>
     <tfoot>
       <tr>
-        <th colspan="2">File Count</th>
+        <th colspan="3">File Count</th>
         {#if fileList && fileList.Contents}
           {#if fileList.Prefix.split("/")[1] !== ""}
             <td>{fileList.Contents.length - 1}</td>
           {:else}
-            <td>{fileList.Contents.length}</td>{/if}
+            <td>{fileList.Contents.length}</td>
+          {/if}
         {:else}
           <td>0</td>
         {/if}
@@ -304,4 +437,11 @@
 </div>
 
 <style>
+  th {
+    cursor: pointer;
+    user-select: none;
+  }
+  th:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
 </style>
