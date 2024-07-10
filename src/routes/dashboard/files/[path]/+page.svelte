@@ -18,9 +18,17 @@
   import {
     IconCornerLeftUp,
     IconFile,
+    IconFileCode,
+    IconFileDescription,
+    IconFileMusic,
+    IconFileSpreadsheet,
+    IconFileText,
+    IconFileZip,
     IconFolder,
     IconFolderPlus,
+    IconPhoto,
     IconTrash,
+    IconVideo,
   } from "@tabler/icons-svelte";
   import axios from "axios";
 
@@ -197,6 +205,49 @@
       },
     });
   }
+
+  function getFileIcon(fileName: string) {
+    const extension = fileName.split(".").pop()?.toLowerCase();
+    switch (extension) {
+      case "txt":
+      case "md":
+      case "rtf":
+        return IconFileText;
+      case "xls":
+      case "xlsx":
+      case "csv":
+        return IconFileSpreadsheet;
+      case "zip":
+      case "rar":
+      case "7z":
+        return IconFileZip;
+      case "mp3":
+      case "wav":
+      case "ogg":
+        return IconFileMusic;
+      case "mp4":
+      case "avi":
+      case "mov":
+        return IconVideo;
+      case "js":
+      case "py":
+      case "java":
+      case "cpp":
+      case "html":
+      case "css":
+        return IconFileCode;
+      case "pdf":
+        return IconFileDescription;
+      case "jpg":
+      case "jpeg":
+      case "png":
+      case "gif":
+      case "bmp":
+        return IconPhoto;
+      default:
+        return IconFile;
+    }
+  }
 </script>
 
 {#if path === ""}
@@ -332,14 +383,9 @@
         </tr>
       {/if}
       <tr on:click={() => folderCreator()}>
-        <td><IconFolderPlus /></td>
-        <td><b>Create Folder</b></td>
+        <td><IconFolderPlus class="text-primary-500" /></td>
+        <td><b class="text-primary-500">Create Folder</b></td>
         <td></td>
-        <td></td>
-      </tr>
-      <tr on:click={() => folderCreator()}>
-        <td><IconFolderPlus /></td>
-        <td><b>Create Folder</b></td>
         <td></td>
       </tr>
       {#if fileList && fileList.CommonPrefixes}
@@ -357,7 +403,9 @@
         {#each sortFiles(filterFiles(fileList.Contents, searchTerm), sortColumn, sortDirection) as file}
           {#if !file.Key.includes(".blazed-placeholder")}
             <tr on:click={() => inspectFile(file)}>
-              <td><IconFile /></td>
+              <td>
+                <svelte:component this={getFileIcon(getFileName(file.Key))} />
+              </td>
               <td>{getFileName(file.Key)}</td>
               <td>{convertSize(file.Size)}</td>
               <td>{formatDate(file.LastModified)}</td>
