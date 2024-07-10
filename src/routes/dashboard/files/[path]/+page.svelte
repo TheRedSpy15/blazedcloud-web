@@ -76,12 +76,20 @@
       } else if (column === "Size") {
         aValue = a.Size;
         bValue = b.Size;
+      } else if (column === "Date") {
+        aValue = new Date(a.LastModified);
+        bValue = new Date(b.LastModified);
       }
 
       if (aValue < bValue) return direction === "asc" ? -1 : 1;
       if (aValue > bValue) return direction === "asc" ? 1 : -1;
       return 0;
     });
+  }
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleString(); // You can customize this format as needed
   }
 
   function toggleSort(column) {
@@ -298,6 +306,13 @@
               : "▼"
             : ""}
         </th>
+        <th on:click={() => toggleSort("Date")}>
+          Date {sortColumn === "Date"
+            ? sortDirection === "asc"
+              ? "▲"
+              : "▼"
+            : ""}
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -306,14 +321,22 @@
           <td><IconCornerLeftUp /></td>
           <td><b>Previous Folder</b></td>
           <td></td>
+          <td></td>
         </tr>
 
         <tr on:click={() => deleteFolder()}>
           <td><span class="text-red-500"><IconTrash /></span></td>
           <td><span class="text-red-500"><b>Delete Folder</b></span></td>
           <td></td>
+          <td></td>
         </tr>
       {/if}
+      <tr on:click={() => folderCreator()}>
+        <td><IconFolderPlus /></td>
+        <td><b>Create Folder</b></td>
+        <td></td>
+        <td></td>
+      </tr>
       <tr on:click={() => folderCreator()}>
         <td><IconFolderPlus /></td>
         <td><b>Create Folder</b></td>
@@ -324,6 +347,7 @@
           <tr on:click={() => gotoFolder(getFolderName(folder.Prefix))}>
             <td><IconFolder /></td>
             <td><b>{getFolderName(folder.Prefix)}</b></td>
+            <td></td>
             <td></td>
           </tr>
         {/each}
@@ -336,6 +360,7 @@
               <td><IconFile /></td>
               <td>{getFileName(file.Key)}</td>
               <td>{convertSize(file.Size)}</td>
+              <td>{formatDate(file.LastModified)}</td>
             </tr>
           {/if}
         {/each}
@@ -343,12 +368,13 @@
     </tbody>
     <tfoot>
       <tr>
-        <th colspan="2">File Count</th>
+        <th colspan="3">File Count</th>
         {#if fileList && fileList.Contents}
           {#if fileList.Prefix.split("/")[1] !== ""}
             <td>{fileList.Contents.length - 1}</td>
           {:else}
-            <td>{fileList.Contents.length}</td>{/if}
+            <td>{fileList.Contents.length}</td>
+          {/if}
         {:else}
           <td>0</td>
         {/if}
