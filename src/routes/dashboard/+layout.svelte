@@ -56,6 +56,22 @@
         >
         <span>Files</span>
       </AppRailAnchor>
+
+      <!-- <AppRailAnchor
+        bind:group={currentTile}
+        name="tile-editor"
+        value={3}
+        title="tile-editor"
+        href="/dashboard/editor"
+        data-sveltekit-prefetch
+        selected={$page.url.pathname === "/dashboard/editor"}
+      >
+        <svelte:fragment slot="lead">
+          <i class="fa-solid fa-image text-2xl"><IconEdit /></i>
+        </svelte:fragment>
+        <span>Editor</span>
+      </AppRailAnchor> -->
+
       <AppRailAnchor
         bind:group={currentTile}
         name="tile-account"
