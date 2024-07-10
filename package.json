@@ -42,6 +42,10 @@
   },
   "type": "module",
   "dependencies": {
+    "@editorjs/editorjs": "^2.30.0",
+    "@editorjs/header": "^2.8.5",
+    "@editorjs/paragraph": "^2.11.6",
+    "@editorjs/simple-image": "^1.6.0",
     "@sveltejs/adapter-cloudflare": "^4.6.1",
     "@tabler/icons-svelte": "^3.9.0",
     "axios": "^1.7.2",
