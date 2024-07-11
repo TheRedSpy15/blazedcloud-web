@@ -95,6 +95,10 @@
     });
   }
 
+  function calculateTotalSize(files: any[]): number {
+    return files.reduce((total, file) => total + file.Size, 0);
+  }
+
   function formatDate(dateString: string) {
     const date = new Date(dateString);
     return date.toLocaleString(); // You can customize this format as needed
@@ -339,6 +343,21 @@
 </div>
 
 <div class="table-container">
+  <div class="file-stats mb-4">
+    <p>
+      Folder Size: {convertSize(calculateTotalSize(fileList?.Contents || []))}
+    </p>
+    <p>
+      Files:
+      {#if fileList && fileList.Contents}
+        {fileList.Prefix.split("/")[1] !== ""
+          ? fileList.Contents.length - 1
+          : fileList.Contents.length}
+      {:else}
+        0
+      {/if}
+    </p>
+  </div>
   <table class="table table-interactive">
     <thead>
       <tr>
@@ -414,20 +433,6 @@
         {/each}
       {/if}
     </tbody>
-    <tfoot>
-      <tr>
-        <th colspan="3">File Count</th>
-        {#if fileList && fileList.Contents}
-          {#if fileList.Prefix.split("/")[1] !== ""}
-            <td>{fileList.Contents.length - 1}</td>
-          {:else}
-            <td>{fileList.Contents.length}</td>
-          {/if}
-        {:else}
-          <td>0</td>
-        {/if}
-      </tr>
-    </tfoot>
   </table>
 
   <div class="p-4">
@@ -441,7 +446,18 @@
     cursor: pointer;
     user-select: none;
   }
+
   th:hover {
     background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .file-stats {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+  }
+
+  .file-stats p {
+    margin-bottom: 0.5rem;
   }
 </style>
