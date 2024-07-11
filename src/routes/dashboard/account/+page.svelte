@@ -46,7 +46,7 @@
           </button>
         {:else if userRecord}
           You don't have an active subscription currently. You can subscribe
-          using your prefered app store, or using Stripe.
+          using your preferred app store, or using Stripe.
           <button
             class="btn btn-primary bg-primary-700"
             on:click={() => checkout()}
