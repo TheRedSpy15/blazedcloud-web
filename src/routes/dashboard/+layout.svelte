@@ -8,7 +8,12 @@
     getDrawerStore,
     LightSwitch,
   } from "@skeletonlabs/skeleton";
-  import { IconFiles, IconMenu2, IconUser } from "@tabler/icons-svelte";
+  import {
+    IconDevices,
+    IconFiles,
+    IconMenu2,
+    IconUser,
+  } from "@tabler/icons-svelte";
   import { onMount } from "svelte";
   import "../../app.postcss";
 
@@ -85,6 +90,11 @@
         >
           <svelte:fragment slot="lead"><IconUser /></svelte:fragment>
           <span>Account</span>
+        </AppRailAnchor>
+
+        <AppRailAnchor href="https://blazedcloud.com/start">
+          <svelte:fragment slot="lead"><IconDevices /></svelte:fragment>
+          <span>Apps</span>
         </AppRailAnchor>
       </AppRail>
     {/if}
