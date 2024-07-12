@@ -1,6 +1,11 @@
 <script lang="ts">
   import { getDrawerStore } from "@skeletonlabs/skeleton";
-  import { IconFiles, IconLogout, IconUser } from "@tabler/icons-svelte";
+  import {
+    IconDevices,
+    IconFiles,
+    IconLogout,
+    IconUser,
+  } from "@tabler/icons-svelte";
   import "../../app.postcss";
 
   const drawerStore = getDrawerStore();
@@ -33,6 +38,14 @@
         <span class="flex items-center">
           <IconUser class="mr-2" />
           Account
+        </span>
+      </a>
+    </li>
+    <li>
+      <a href="https://blazedcloud.com/start" on:click={closeDrawer}>
+        <span class="flex items-center">
+          <IconDevices class="mr-2" />
+          Download App
         </span>
       </a>
     </li>
